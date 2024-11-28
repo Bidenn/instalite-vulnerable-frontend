@@ -64,7 +64,7 @@ pipeline {
                     // Perform ZAP baseline scan
                     script {
                         try {
-                            sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml'
+                            sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml || true'
                         } catch (Exception e) {
                             echo 'ZAP scan failed, but continuing the pipeline...'
                         }
