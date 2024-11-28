@@ -48,7 +48,7 @@ pipeline {
             steps {
                 // Install dependencies and start the npm start script in detached mode
                 sh 'npm install'
-                sh 'npm start &'
+                sh 'nohup npm start &'
             }
         }
 
@@ -64,7 +64,7 @@ pipeline {
                     // Perform ZAP baseline scan
                     script {
                         try {
-                            sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml || true'
+                            sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml'
                         } catch (Exception e) {
                             echo 'ZAP scan failed, but continuing the pipeline...'
                         }
