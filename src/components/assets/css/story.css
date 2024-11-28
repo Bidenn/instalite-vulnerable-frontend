@@ -1,0 +1,58 @@
+/* Add to your style.css */
+
+/* Ensure the swiper container is properly styled */
+.swiper-container {
+    display: flex;
+    overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+    scroll-snap-type: x mandatory; /* Smooth scrolling between items */
+}
+
+/* Style for each swiper-slide to display them in a row */
+.swiper-wrapper {
+    display: flex;
+    gap: 15px; /* Adds space between the items */
+}
+
+/* Ensure each story box takes a reasonable width */
+.swiper-slide {
+    flex-shrink: 0; /* Prevents shrinking, so the items stay at a fixed width */
+    width: 120px; /* You can adjust this to change the size of the stories */
+    scroll-snap-align: start;
+}
+
+/* Style for the image and container */
+.story-bx img {
+    width: 100%; /* Ensure images fill the container */
+    border-radius: 8px; /* Optional: gives rounded corners */
+}
+
+/* Add some styling for live text */
+.live-text {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Optional: Style for the add box */
+.add-box {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+/* Detail text at the bottom of each story */
+.detail {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+}
