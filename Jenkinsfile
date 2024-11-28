@@ -39,16 +39,16 @@ pipeline {
 
         stage('Stop npm Start Script') {
             steps {
-            // Stop the npm start script
-            sh 'pkill -f "npm start" || true'
+                // Stop the npm start script if it's running
+                sh 'pkill -f "npm start" || true'
             }
         }
 
         stage('Start npm Start Script') {
             steps {
-            // Start the npm start script
-            sh 'npm install'
-            sh 'npm start &'
+                // Install dependencies and start the npm start script in detached mode
+                sh 'npm install'
+                sh 'npm start &'
             }
         }
 
