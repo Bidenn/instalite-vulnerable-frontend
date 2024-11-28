@@ -41,6 +41,7 @@ pipeline {
         stage('Start npm Start Script') {
             steps {
             // Start the npm start script
+            sh 'npm install'
             sh 'npm start &'
             }
         }
