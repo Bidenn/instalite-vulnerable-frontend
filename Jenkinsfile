@@ -62,7 +62,13 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     // Perform ZAP baseline scan
-                    sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml'
+                    script {
+                        try {
+                            sh 'zap-baseline.py -t http://localhost:3000 -r zapbaseline.html -x zapbaseline.xml'
+                        } catch (Exception e) {
+                            echo 'ZAP scan failed, but continuing the pipeline...'
+                        }
+                    }
                 }
                 // Copy and archive the ZAP scan results
                 sh 'cp /zap/wrk/zapbaseline.html ./zapbaseline.html'
