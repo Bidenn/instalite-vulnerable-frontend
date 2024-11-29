@@ -24,9 +24,9 @@ function App() {
                         <Route path="/login" element={<Login />}/>
                         <Route element={<ProtectedRoute />}>
                             <Route path="/Home" element={<Homepage />} />
-                            <Route path="/profile/" element={<Profile />} />
+                            <Route path="/profile/:userId" element={<Profile />} />
                             <Route path="/create-post" element={<CreatePost />} />
-                            <Route path="/profile/edit" element={<EditProfile />} />
+                            <Route path="/profile/:userId/edit" element={<EditProfile />} />
                             <Route path="/posts/:postId" element={<PostDetail />} />
                         </Route>          
                     </Routes>

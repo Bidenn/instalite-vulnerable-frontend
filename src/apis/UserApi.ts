@@ -6,6 +6,7 @@ const API_URL = 'http://localhost:5000/api/users';
 interface UserData {
   username: string;
   fullName: string;
+  password: string;
   career?: string;
   aboutMe?: string;
   profilePhoto?: string;
@@ -38,6 +39,7 @@ export const fetchUserWP = async (userId: number): Promise<{ user: UserData | nu
         career: user.career,
         aboutMe: user.aboutMe,
         profilePhoto: user.profilePhoto,
+        password: user.password,
       },
       posts: posts || [],  // Handle case where no posts exist
     };
@@ -56,6 +58,7 @@ export const fetchUserWOP = async (userId: number): Promise<{ user: UserData | n
     return {
       user: {
         username: user.username,
+        password: user.password,
         fullName: user.fullName,
         career: user.career,
         aboutMe: user.aboutMe,

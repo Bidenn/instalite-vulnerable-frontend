@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { updateUser, fetchUserWOP } from '../apis/UserApi';
 import nullPhoto from './assets/images/avatar/NullUserPhoto.png'
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 interface ProfileData {
     fullName: string;
@@ -9,6 +10,7 @@ interface ProfileData {
     aboutMe?: string;
     profilePhoto?: File | string;
     username: string;
+    password: string;
 }
 
 const EditProfile: React.FC = () => {
@@ -18,13 +20,13 @@ const EditProfile: React.FC = () => {
         aboutMe: '',
         profilePhoto: '',
         username: '',
+        password: '',
     });
-    const [updateStatus, setUpdateStatus] = useState<string | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
-
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const navigate = useNavigate(); // Hook untuk redirect
-    const userId = localStorage.getItem('userId');
+    const navigate = useNavigate();
+    
+    const { userId } = useParams<{ userId: string }>();
 
     useEffect(() => {
         if (userId) {
@@ -80,6 +82,7 @@ const EditProfile: React.FC = () => {
                 formData.append('career', profileData.career || '');
                 formData.append('aboutMe', profileData.aboutMe || '');
                 formData.append('username', profileData.username);
+                formData.append('password', profileData.password);
 
                 if (profileData.profilePhoto && profileData.profilePhoto instanceof File) {
                     formData.append('profilePhoto', profileData.profilePhoto);
@@ -87,16 +90,30 @@ const EditProfile: React.FC = () => {
 
                 const response = await updateUser(Number(userId), formData);
                 if (response.message) {
-                    setUpdateStatus('Profile updated successfully');
-                    // Redirect ke halaman profil
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Profile updated successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    });
                     setTimeout(() => {
-                        navigate('/profile');
-                    }, 1500); // Redirect setelah 1,5 detik
+                        navigate(`/profile/${userId}`); // Navigate to updated profile
+                    }, 1500);
                 } else {
-                    setUpdateStatus(response.error || 'Failed to update profile');
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.error || 'Failed to update profile',
+                        icon: 'error',
+                        confirmButtonText: 'Try Again'
+                    });
                 }
             } catch (error) {
-                setUpdateStatus('An error occurred while updating the profile');
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while updating the profile.',
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                });
                 console.error('Update profile error:', error);
             }
         }
@@ -108,7 +125,7 @@ const EditProfile: React.FC = () => {
                 <div className="container">
                     <div className="main-bar">
                         <div className="left-content">
-                            <a href="/profile" className="back-btn">
+                            <a href={`/profile/${localStorage.getItem('userId')}`} className="back-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
                                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -118,7 +135,7 @@ const EditProfile: React.FC = () => {
                         </div>
                         <div className="mid-content"></div>
                         <div className="right-content">
-                            <a href="/profile" className="text-dark font-20">
+                            <a href={`/profile/${localStorage.getItem('userId')}`} className="text-dark font-20">
                                 <i className="fa-solid fa-check"></i>
                             </a>
                         </div>
@@ -155,6 +172,16 @@ const EditProfile: React.FC = () => {
                             <div className="mb-3 input-group input-mini">
                                 <input
                                     type="text"
+                                    name="password"
+                                    className="form-control"
+                                    placeholder="Username"
+                                    value={profileData.password}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="mb-3 input-group input-mini">
+                                <input
+                                    type="text"
                                     name="fullName"
                                     className="form-control"
                                     placeholder="Full Name"
@@ -182,7 +209,6 @@ const EditProfile: React.FC = () => {
                                 />
                             </div>
                             <button type="submit" className="btn btn-primary">Save Changes</button>
-                            {updateStatus && <p>{updateStatus}</p>}
                         </form>
                     </div>
                 </div>
