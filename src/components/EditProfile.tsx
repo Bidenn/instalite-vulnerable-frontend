@@ -79,8 +79,8 @@ const EditProfile: React.FC = () => {
             try {
                 const formData = new FormData();
                 formData.append('fullName', profileData.fullName);
-                formData.append('career', profileData.career || '');
-                formData.append('aboutMe', profileData.aboutMe || '');
+                formData.append('career', profileData.career ?? '');
+                formData.append('aboutMe', profileData.aboutMe ?? '');
                 formData.append('username', profileData.username);
                 formData.append('password', profileData.password);
 
@@ -102,7 +102,7 @@ const EditProfile: React.FC = () => {
                 } else {
                     Swal.fire({
                         title: 'Error!',
-                        text: response.error || 'Failed to update profile',
+                        text: response.error ?? 'Failed to update profile',
                         icon: 'error',
                         confirmButtonText: 'Try Again'
                     });
@@ -195,7 +195,7 @@ const EditProfile: React.FC = () => {
                                     name="career"
                                     className="form-control"
                                     placeholder="Career"
-                                    value={profileData.career || ''}
+                                    value={profileData.career ?? ''}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -204,7 +204,7 @@ const EditProfile: React.FC = () => {
                                     name="aboutMe"
                                     className="form-control"
                                     placeholder="About Me"
-                                    value={profileData.aboutMe || ''}
+                                    value={profileData.aboutMe ?? ''}
                                     onChange={handleInputChange}
                                 />
                             </div>

@@ -42,7 +42,7 @@ export const deletePost = async (postId: string): Promise<DeletePostResponse> =>
         return response.data;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>;
-        return { error: err.response?.data?.error || 'Failed to delete post.' };
+        return { error: err.response?.data?.error ?? 'Failed to delete post.' };
     }
 };
 
@@ -52,7 +52,7 @@ export const detailPost = async (postId: string) => {
         return response.data;
     } catch (error: any) {
         throw new Error(
-            error.response?.data?.error || 'Failed to fetch post details'
+            error.response?.data?.error ?? 'Failed to fetch post details'
         );
     }
 };

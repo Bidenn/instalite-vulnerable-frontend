@@ -44,7 +44,7 @@ const Login: React.FC = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Login Failed',
-                    text: response.error || 'Invalid credentials. Please try again.',
+                    text: response.error ?? 'Invalid credentials. Please try again.',
                 });
             }
         } catch (error) {

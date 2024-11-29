@@ -23,6 +23,6 @@ export const fetchHomepagePosts = async (userId: string): Promise<HomepageRespon
 
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>;
-        return { error: err.response?.data?.error || 'Failed to fetch posts.' };
+        return { error: err.response?.data?.error ?? 'Failed to fetch posts.' };
     }
 };
