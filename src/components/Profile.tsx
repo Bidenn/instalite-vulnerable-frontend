@@ -97,8 +97,8 @@ const Profile: React.FC = () => {
                         <div className="main-profile">
                             <div className="left-content">
                                 <span>@{user.username}</span>
-                                <h5 className="mt-1">{user.fullName || 'Full Name'}</h5>
-                                <h6 className="text-primary font-w400">{user.career || 'Career'}</h6>
+                                <h5 className="mt-1">{user.fullName ?? 'Full Name'}</h5>
+                                <h6 className="text-primary font-w400">{user.career ?? 'Career'}</h6>
                             </div>
                             <div className="right-content">
                                 <div className="upload-box">
@@ -116,7 +116,7 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="info">
                             <h6>About Me</h6>
-                            <p>{user.aboutMe || 'No details provided'}</p>
+                            <p>{user.aboutMe ?? 'No details provided'}</p>
                         </div>
                     </div>
                     <div className="contant-section">

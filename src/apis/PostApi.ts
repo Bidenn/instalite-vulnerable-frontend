@@ -20,7 +20,7 @@ export const storePost = async (formData: FormData): Promise<CreatePostResponse>
         return response.data;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>;
-        return { error: err.response?.data?.error || 'Post creation failed.' };
+        return { error: err.response?.data?.error ?? 'Post creation failed.' };
     }
 };
 
