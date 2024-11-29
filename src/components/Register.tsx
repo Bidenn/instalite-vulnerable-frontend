@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { register } from '../apis/AuthApi';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import pic3 from './assets/images/login/pic3.jpg';
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -15,8 +17,7 @@ const Register: React.FC = () => {
         password: '',
     });
 
-    const [message, setMessage] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false); 
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -26,21 +27,40 @@ const Register: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+
         try {
             const response = await register(formData);
 
             if (response.error) {
-                setMessage(response.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration Failed',
+                    text: response.error,
+                });
             } else {
-                setMessage('Registration successful!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registration Successful!',
+                    text: 'You will be redirected to the login page.',
+                    timer: 2000, // Auto-close after 2 seconds
+                    showConfirmButton: false,
+                });
+
+                // Reset form data
                 setFormData({ username: '', email: '', password: '' });
+
+                // Redirect to login page after a short delay
                 setTimeout(() => {
-                    navigate('/login');  // Navigate to login after a brief delay
-                }, 2000); // Optional: adds a 2-second delay for the user to read the message
+                    navigate('/login');
+                }, 2000);
             }
         } catch (error) {
             console.error('Registration failed:', error);
-            setMessage('An error occurred while registering.');
+            Swal.fire({
+                icon: 'error',
+                title: 'An Error Occurred',
+                text: 'Please try again later.',
+            });
         } finally {
             setLoading(false);
         }
@@ -50,11 +70,10 @@ const Register: React.FC = () => {
         <div className="content-body">
             <div className="container vh-100">
                 <div className="welcome-area">
-                    <div className="bg-image bg-image-overlay" style={{ backgroundImage: `url('/path/to/pic3.jpg')` }}></div>
+                    <div className="bg-image bg-image-overlay" style={{ backgroundImage: `url(${pic3})` }}></div>
                     <div className="join-area">
                         <div className="started">
                             <h1 className="title">Instalite - Auth</h1>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3 input-group input-group-icon">
@@ -105,7 +124,6 @@ const Register: React.FC = () => {
                             <button type="submit" className="btn btn-primary btn-block mb-3 btn-rounded" disabled={loading}>
                                 {loading ? 'Registering...' : 'Register'}
                             </button>
-                            <p className="text-light text-center">{message}</p>
                         </form>
                         <div className="d-flex align-items-center justify-content-center">
                             <a href="/login" className="text-light text-center d-block">Already have an account?</a>

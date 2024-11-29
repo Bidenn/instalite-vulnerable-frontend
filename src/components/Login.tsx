@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import pic4 from './assets/images/login/pic4.jpg';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../apis/AuthApi';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 interface FormData {
     username: string;
@@ -13,10 +14,9 @@ const Login: React.FC = () => {
         username: '',
         password: '',
     });
-    const [message, setMessage] = useState<string>('');
-    
+
     const navigate = useNavigate();
-    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -29,18 +29,33 @@ const Login: React.FC = () => {
         e.preventDefault();
         try {
             const response = await login(formData); // Use login from AuthApi
-    
+
             if (response.message === "Login successful" && response.userId) {
                 localStorage.setItem('userId', response.userId.toString());
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successful',
+                    text: 'Welcome back!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 navigate('/home');
             } else {
-                setMessage(response.error || 'Login failed. Please check your credentials.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: response.error || 'Invalid credentials. Please try again.',
+                });
             }
         } catch (error) {
             console.error('Login failed:', error);
-            setMessage('Login failed. Please check your credentials.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while logging in. Please try again later.',
+            });
         }
-    };   
+    };
 
     return (
         <div className="page-wraper">
@@ -95,7 +110,6 @@ const Login: React.FC = () => {
                                     </span>
                                 </div>
                                 <button type="submit" className="btn btn-primary btn-block mb-3">Login</button>
-                                <p className="text-center mt-3">{message}</p>
                             </form>
                             <div className="d-flex align-items-center justify-content-center">
                                 <a href="/register" className="text-light text-center d-block">Don’t have an account?</a>

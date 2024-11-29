@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import camlogo from './assets/images/cam-logo-removed.png';
 import { storePost } from '../apis/PostApi';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const CreatePost: React.FC = () => {
     const [postContent, setPostContent] = useState<string>(''); // Caption
@@ -14,7 +15,11 @@ const CreatePost: React.FC = () => {
         if (storedUserId) {
             setUserId(storedUserId);
         } else {
-            alert('User not authenticated. Please log in.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'User not authenticated',
+                text: 'Please log in to create a post.',
+            });
         }
     }, []);
 
@@ -32,12 +37,20 @@ const CreatePost: React.FC = () => {
     // Handle form submission
     const handleSubmit = async () => {
         if (!userId) {
-            alert("User ID not found. Please log in.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'User ID not found. Please log in.',
+            });
             return;
         }
 
         if (!selectedImage || !postContent) {
-            alert("Please provide both an image and caption.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Incomplete Data',
+                text: 'Please provide both an image and a caption.',
+            });
             return;
         }
 
@@ -49,14 +62,27 @@ const CreatePost: React.FC = () => {
         try {
             const response = await storePost(formData);
             if (response.error) {
-                alert("Failed to create post. Please try again.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Post Failed',
+                    text: 'Failed to create post. Please try again.',
+                });
             } else {
-                alert("Post created successfully!");
-                navigate('/Home');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Post Created',
+                    text: 'Your post was created successfully!',
+                }).then(() => {
+                    navigate('/Home');
+                });
             }
         } catch (error) {
             console.error("Error creating post:", error);
-            alert("Failed to create post. Please try again.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while creating the post. Please try again.',
+            });
         }
     };
 
