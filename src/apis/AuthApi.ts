@@ -31,7 +31,7 @@ export const register = async (formData: RegisterFormData): Promise<RegisterResp
         return response.data;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>;
-        return { error: err.response?.data?.error || 'Registration failed.' };
+        return { error: err.response?.data?.error ?? 'Registration failed.' };
     }
 };
 
@@ -41,7 +41,7 @@ export const login = async (formData: LoginFormData): Promise<LoginResponse> => 
         return { message: response.data.message, userId: response.data.userId };
     } catch (error) {
         const err = error as AxiosError<{ error: string }>;
-        return { error: err.response?.data?.error || 'Login failed.' };
+        return { error: err.response?.data?.error ?? 'Login failed.' };
     }
 };
 
