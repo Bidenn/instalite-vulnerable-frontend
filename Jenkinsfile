@@ -2,21 +2,19 @@ pipeline {
     agent any
 
     environment {
-        scannerHome = tool 'jenkins-frontend-tool' // Configure the SonarQube scanner tool in Jenkins
+        scannerHome = tool 'jenkins-frontend-tool'
     }
 
     stages {
         stage('SCM Checkout') {
             steps {
-                // Clone the specified GitHub repository
                 git branch: 'main', url: 'https://github.com/Bidenn/instalite-vulnerable-frontend.git'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // Run SonarQube scanner
-                withSonarQubeEnv('SonarQube Server') { // Ensure the correct SonarQube server name is configured
+                withSonarQubeEnv('SonarQube Server') { 
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
@@ -24,7 +22,6 @@ pipeline {
 
         stage("Quality Gate") {
             steps {
-                // Wait for the SonarQube Quality Gate
                 timeout(time: 30, unit: 'MINUTES') {
                     script {
                         try {
@@ -34,6 +31,20 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('Copy env-live to .env') {
+            steps {
+                sh '''
+                if [ -f env-live ]; then
+                    cp env-live .env
+                    echo "env-live copied to .env successfully."
+                else
+                    echo "env-live file does not exist. Failing the stage."
+                    exit 1
+                fi
+                '''
             }
         }
 
