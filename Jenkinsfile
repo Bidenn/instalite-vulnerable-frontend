@@ -52,7 +52,7 @@ pipeline {
 
                 // Install dependencies and start the npm start script in detached mode
                 sh 'npm install'
-                sh 'nohup npm start > npm-start.log 2>&1 &'
+                sh 'nohup npm run start > npm-start.log 2>&1 &'
             }
         }
 
