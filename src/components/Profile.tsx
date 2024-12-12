@@ -4,7 +4,6 @@ import './assets/css/style.css';
 import nullPhoto from './assets/images/avatar/NullUserPhoto.png';
 import Menubar from './Menubar';
 import { fetchUserWP } from '../apis/UserApi';
-import { logout } from '../apis/AuthApi';
 
 interface UserData {
     username?: string;
@@ -32,11 +31,11 @@ const Profile: React.FC = () => {
     const [posts, setPosts] = useState<PostData[]>([]);
     const navigate = useNavigate();
 
-    // Retrieve the userId from localStorage
+    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+
     const userIdString = localStorage.getItem('userId');
     const userId = userIdString ? Number(userIdString) : null;
 
-    // Redirect to login page if userId is not available in localStorage
     useEffect(() => {
         if (!userId) {
             navigate('/login');
@@ -59,7 +58,7 @@ const Profile: React.FC = () => {
     }, [userId, navigate]);
 
     useEffect(() => {
-        console.log('User Data Updated:', user); // Debugging line to log user data
+        console.log('User Data Updated:', user); 
     }, [user]);
 
     const handleLogout = () => {
@@ -73,7 +72,7 @@ const Profile: React.FC = () => {
                 <div className="container">
                     <div className="main-bar">
                         <div className="left-content">
-                            <a href="/Home" className="back-btn">
+                            <a href="/home" className="back-btn">
                                 <i className="fa-solid fa-arrow-left"></i>
                             </a>
                             <h4 className="title mb-0">Profile</h4>
@@ -97,17 +96,12 @@ const Profile: React.FC = () => {
                         <div className="main-profile">
                             <div className="left-content">
                                 <span>@{user.username}</span>
-                                <h5 className="mt-1">{user.fullName ?? 'Full Name'}</h5>
-                                <h6 className="text-primary font-w400">{user.career ?? 'Career'}</h6>
+                                <h5 className="mt-1">{user.fullName ?? '-'}</h5>
+                                <h6 className="text-primary font-w400">{user.career ?? '-'}</h6>
                             </div>
                             <div className="right-content">
                                 <div className="upload-box">
-                                    {/* Ensure profilePhoto is a valid URL */}
-                                    <img
-                                        src={user.profilePhoto ? `${"http://localhost:5000/users/" + user.profilePhoto}` : nullPhoto}
-                                        alt="profile"
-                                    />
-
+                                    <img src={user.profilePhoto ? `${`${apiUrl}/users/` + user.profilePhoto}` : nullPhoto} alt="profile" />
                                     <button className="upload-btn" onClick={() => navigate('edit')}>
                                         <i className="fa-solid fa-pencil"></i>
                                     </button>
@@ -116,13 +110,10 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="info">
                             <h6>About Me</h6>
-                            <p>{user.aboutMe ?? 'No details provided'}</p>
+                            <p>{user.aboutMe ?? '-'}</p>
                         </div>
                     </div>
                     <div className="contant-section">
-                        <div className="title-bar my-2">
-                            <h6 className="mb-0">My Posts</h6>
-                        </div>
                         <div className="dz-lightgallery style-2">
                             {posts.map((post) => (
                                 <a key={post.id} className="gallery-box" href={`/posts/${post.id}`}>

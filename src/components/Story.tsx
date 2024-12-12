@@ -8,6 +8,9 @@ interface StoryProps {
 }
 
 const Story: React.FC<StoryProps> = ({ userName, profilePhoto }) => {
+  
+  const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+  
   return (
     <div className="author-notification mb-4">
       <div className="swiper-btn-center-lr my-0">
@@ -17,12 +20,12 @@ const Story: React.FC<StoryProps> = ({ userName, profilePhoto }) => {
               <a href="/profile" className="categore-box style-1">
                 <div className="story-bx">
                   <img
-                    src={profilePhoto ? `http://localhost:5000/users/${profilePhoto}` : nullPhoto}
+                    src={profilePhoto ? `${apiUrl}/users/${profilePhoto}` : nullPhoto}
                     alt="Photo Profile"
                   />
                   <div className="add-box"></div>
                 </div>
-                <span className="detail">{userName}</span> {/* Update text to show the username */}
+                <span className="detail">{userName}</span>
               </a>
             </div>
           </div>

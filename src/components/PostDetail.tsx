@@ -1,42 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { detailPost } from '../apis/PostApi'; // Pastikan API ini sudah benar
+import { detailPost } from '../apis/PostApi';
 import PostHeader from './PostHeader';
 import Menubar from './Menubar';
 import './assets/css/style.css';
 import nullPhoto from './assets/images/avatar/NullUserPhoto.png';
+import Swal from 'sweetalert2'; 
+import { deletePost } from '../apis/PostApi';
+import { useNavigate } from 'react-router-dom';
 
 const PostDetail: React.FC = () => {
-    const { postId } = useParams<{ postId: string }>(); // Ambil `postId` dari URL
-    const [postContent, setPostContent] = useState<string>(''); // State untuk konten
-    const [postCaption, setPostCaption] = useState<string>(''); // State untuk caption
-    const [userPhoto, setPosterPhoto] = useState<string>(''); // State untuk caption
-    const [userName, setPosterUsername] = useState<string>(''); // State untuk caption
+    const { postId } = useParams<{ postId: string }>();
+    const [postContent, setPostContent] = useState<string>('');
+    const [postCaption, setPostCaption] = useState<string>('');
+    const [userPhoto, setPosterPhoto] = useState<string>('');
+    const [userName, setPosterUsername] = useState<string>('');
+    const navigate = useNavigate();
 
-    // Fungsi untuk memuat data postingan
+    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+
+    const handleDeletePost = async (postId: string) => {
+        if (!postId) return;
+        try {
+            const response = await deletePost(postId);
+            if (response.error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: `Failed to delete post: ${response.error}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+            } else {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Post deleted successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                }).then(() => {
+                    navigate('/home'); 
+                });
+            }
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            Swal.fire({
+                title: 'Error!',
+                text: "An error occurred while deleting the post.",
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
+        }
+    };
+
+
     const loadPostData = async () => {
         try {
-            if (!postId) return; // Pastikan `postId` valid
-            const postData = await detailPost(postId); // Panggil API
+            if (!postId) return;
+            const postData = await detailPost(postId);
             const posterData = postData.user;
 
             if (postData) {
-                setPostContent(postData.content || ''); // Simpan konten
-                setPostCaption(postData.caption || ''); // Simpan caption
-                setPosterPhoto(posterData.photoProfile || ''); // Simpan caption
-                setPosterUsername(posterData.username || ''); // Simpan caption
+                setPostContent(postData.content || '');
+                setPostCaption(postData.caption || '');
+                setPosterPhoto(posterData.photoProfile || '');
+                setPosterUsername(posterData.username || '');
             }
         } catch (error) {
             console.error('Failed to fetch post data:', error);
         }
     };
 
-    // Panggil `loadPostData` saat komponen dimuat
     useEffect(() => {
         loadPostData();
     }, [postId]);
 
-    // Fungsi untuk meng-handle klik konten (opsional, sesuaikan kebutuhan)
     const handleContentClick = () => {
         console.log('Content clicked!');
     };
@@ -89,7 +125,27 @@ const PostDetail: React.FC = () => {
                                 style={{ marginBottom: 5, cursor: 'pointer' }}
                                 onClick={handleContentClick}
                             >
-                                <img src={"http://localhost:5000/posts/" + postContent} alt="Post content" />
+                                <img src={`${apiUrl}/posts/` + postContent} alt="Post content" />
+                            </div>
+                            <div className="post-meta-btn" style={{ marginTop: 10 }}>
+                                <ul>
+                                    <li>
+                                        <a href="#" className="action-btn bg-primary">
+                                            <i className="fa-regular fa-heart fill-icon"></i>
+                                            <i className="fa-solid fa-heart fill-icon-2"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" className="action-btn bg-secondary">
+                                            <i className="fa-solid fa-comment fill-icon"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a style={{ cursor: "pointer" }} onClick={() => handleDeletePost(postId!)} className="action-btn bg-danger">
+                                            <i className="fa-solid fa-trash" style={{ color: 'white' }}></i>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                             <div className="post-footer mt-2">
                                 <p className="d-flex align-items-start">{postCaption}</p>

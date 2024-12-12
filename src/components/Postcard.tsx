@@ -2,11 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './assets/css/style.css';
 import nullPhoto from './assets/images/avatar/NullUserPhoto.png';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { deletePost } from '../apis/PostApi';
 
-// Type definition for the props
 interface PostcardProps {
     userName: string;
     userImage: string;
@@ -15,33 +11,16 @@ interface PostcardProps {
     postId: string;
 }
 
-const handleDeletePost = async (postId: string) => {
-    try {
-        const response = await deletePost(postId);
-
-        if (response.error) {
-            alert(`Failed to delete post: ${response.error}`);
-        } else {
-            alert("Post deleted successfully!");
-            // Logic for refreshing the post list
-        }
-    } catch (error) {
-        console.error("Error deleting post:", error);
-        alert("An error occurred while deleting the post.");
-    }
-};
-
-// PostcardHeader: Displays the user image and username
 const PostcardHeader: React.FC<{ userName: string; userImage: string; postId: string }> = ({ userName, userImage, postId }) => {
     return (
         <div className="top-meta" style={{ marginBottom: 5 }}>
             <div className="d-flex justify-content-between align-items-start">
-                <a href="user-profile.html" className="media media-40">
+                <a href="" className="media media-40">
                     <img className="rounded" src={userImage ? `${userImage}` : nullPhoto} alt="photo profile" />
                 </a>
                 <div className="meta-content ms-2">
                     <p className="title mb-0 d-flex align-items-start">
-                        <a href="#" style={{ fontWeight: "bold", fontSize: 15 }}>
+                        <a href="" style={{ fontWeight: "bold", fontSize: 15 }}>
                             {userName}
                         </a>
                     </p>
@@ -69,48 +48,24 @@ const PostcardHeader: React.FC<{ userName: string; userImage: string; postId: st
                     </ul>
                 </div>
             </div>
-            <FontAwesomeIcon
-                icon={faTrash}
-                style={{ cursor: "pointer" }}
-                onClick={() => handleDeletePost(postId)}
-            />
         </div>
     );
 };
 
-// PostcardContent: Displays the full image (100% width)
 const PostcardContent: React.FC<{ postContent: string; postId: string }> = ({ postContent, postId }) => {
-    const navigate = useNavigate(); // Hook for navigation
-
+    const navigate = useNavigate();
+    
     const handleImageClick = () => {
-        navigate(`/posts/${postId}`); // Navigate to the detailed view of the post
+        navigate(`/posts/${postId}`); 
     };
 
     return (
-        <div className="dz-media" style={{ marginBottom: 5, cursor: 'pointer' }} onClick={handleImageClick}>
-            <img src={postContent} alt="Post content" />
-            <div className="post-meta-btn" style={{ marginTop: 10 }}>
-                <ul>
-                    <li>
-                        <a href="javascript:void(0);" className="action-btn bg-primary">
-                            <i className="fa-regular fa-heart fill-icon"></i>
-                            <i className="fa-solid fa-heart fill-icon-2"></i>
-                            <h6 className="font-14 mb-0 ms-2" id="value1">221</h6>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="comment.html" className="action-btn bg-secondary">
-                            <i className="fa-solid fa-comment fill-icon"></i>
-                            <h6 className="font-14 mb-0 ms-2">150</h6>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <div className="dz-media" style={{ marginBottom: 5 }}>
+            <img src={postContent} alt="Post content" style={{ cursor: 'pointer' }} onClick={handleImageClick} />
         </div>
     );
 };
 
-// PostcardFooter: Displays the username and a truncated version of the post content
 const PostcardFooter: React.FC<{ userName: string; postCaption: string }> = ({ postCaption }) => {
     const truncatedContent = postCaption.length > 100 ? `${postCaption.substring(0, 100)}...` : postCaption;
 
@@ -121,21 +76,20 @@ const PostcardFooter: React.FC<{ userName: string; postCaption: string }> = ({ p
     );
 };
 
-// Main Postcard component combining all three sections
 const Postcard: React.FC<PostcardProps> = ({ userName, userImage, postContent, postCaption, postId }) => {
+    
+    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+    
     return (
         <div className="post-card">
-            {/* Postcard Header */}
             <PostcardHeader
                 userName={userName}
-                userImage={userImage ? `http://localhost:5000/users/${userImage}` : nullPhoto}
+                userImage={userImage ? `${apiUrl}/users/${userImage}` : nullPhoto}
                 postId={postId}
             />
 
-            {/* Postcard Content */}
-            <PostcardContent postContent={`http://localhost:5000/posts/${postContent}`} postId={postId} />
+            <PostcardContent postContent={`${apiUrl}/posts/${postContent}`} postId={postId} />
 
-            {/* Postcard Footer */}
             <PostcardFooter userName={userName} postCaption={postCaption} />
         </div>
     );

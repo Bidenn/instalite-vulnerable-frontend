@@ -42,14 +42,12 @@ const Register: React.FC = () => {
                     icon: 'success',
                     title: 'Registration Successful!',
                     text: 'You will be redirected to the login page.',
-                    timer: 2000, // Auto-close after 2 seconds
+                    timer: 1500, 
                     showConfirmButton: false,
                 });
 
-                // Reset form data
                 setFormData({ username: '', email: '', password: '' });
 
-                // Redirect to login page after a short delay
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
@@ -73,7 +71,7 @@ const Register: React.FC = () => {
                     <div className="bg-image bg-image-overlay" style={{ backgroundImage: `url(${pic3})` }}></div>
                     <div className="join-area">
                         <div className="started">
-                            <h1 className="title">Instalite - Auth</h1>
+                            <h1 className="title">Instalite - Register</h1>
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3 input-group input-group-icon">

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import camlogo from './assets/images/cam-logo-removed.png';
 import { storePost } from '../apis/PostApi';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
 
 const CreatePost: React.FC = () => {
-    const [postContent, setPostContent] = useState<string>(''); // Caption
-    const [selectedImage, setSelectedImage] = useState<File | null>(null); // Image
+    const [postContent, setPostContent] = useState<string>('');
+    const [selectedImage, setSelectedImage] = useState<File | null>(null); 
     const [userId, setUserId] = useState<string | null>(null);
     const navigate = useNavigate();
 
@@ -23,18 +23,15 @@ const CreatePost: React.FC = () => {
         }
     }, []);
 
-    // Handle caption change
     const handlePostContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setPostContent(e.target.value);
     };
 
-    // Handle image selection
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
         setSelectedImage(file);
     };
 
-    // Handle form submission
     const handleSubmit = async () => {
         if (!userId) {
             Swal.fire({
@@ -55,9 +52,9 @@ const CreatePost: React.FC = () => {
         }
 
         const formData = new FormData();
-        formData.append('userId', userId); // Attach user ID
-        formData.append('caption', postContent); // Attach caption
-        formData.append('content', selectedImage); // Attach image file
+        formData.append('userId', userId); 
+        formData.append('caption', postContent); 
+        formData.append('content', selectedImage); 
 
         try {
             const response = await storePost(formData);
@@ -73,7 +70,7 @@ const CreatePost: React.FC = () => {
                     title: 'Post Created',
                     text: 'Your post was created successfully!',
                 }).then(() => {
-                    navigate('/Home');
+                    navigate('/home');
                 });
             }
         } catch (error) {
@@ -88,7 +85,6 @@ const CreatePost: React.FC = () => {
 
     return (
         <div className="page-wraper header-fixed">
-            {/* Header */}
             <header className="header bg-white">
                 <div className="container">
                     <div className="main-bar">
@@ -105,11 +101,9 @@ const CreatePost: React.FC = () => {
                     </div>
                 </div>
             </header>
-
             <div className="page-content">
                 <div className="container">
                     <div className="post-content-area">
-                        {/* Image Upload */}
                         <div className="image-upload-container text-center">
                             {!selectedImage && (
                                 <label htmlFor="file-upload" className="image-upload-icon">
@@ -123,7 +117,6 @@ const CreatePost: React.FC = () => {
                                     />
                                 </label>
                             )}
-
                             {selectedImage && (
                                 <div className="image-preview mt-3">
                                     <img
@@ -135,8 +128,6 @@ const CreatePost: React.FC = () => {
                                 </div>
                             )}
                         </div>
-
-                        {/* Caption Input */}
                         <div className="caption-input mt-3">
                             <textarea
                                 className="form-control"

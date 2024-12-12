@@ -2,31 +2,32 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { updateUser, fetchUserWOP } from '../apis/UserApi';
 import nullPhoto from './assets/images/avatar/NullUserPhoto.png'
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
 
 interface ProfileData {
-    fullName: string;
-    career?: string;
-    aboutMe?: string;
     profilePhoto?: File | string;
     username: string;
     password: string;
+    fullName?: string;
+    career?: string;
+    aboutMe?: string;
 }
 
 const EditProfile: React.FC = () => {
     const [profileData, setProfileData] = useState<ProfileData>({
-        fullName: '',
-        career: '',
-        aboutMe: '',
         profilePhoto: '',
         username: '',
         password: '',
+        fullName: '',
+        career: '',
+        aboutMe: '',
     });
-    const [imagePreview, setImagePreview] = useState<string | null>(null); // State for image preview
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const navigate = useNavigate();
     
     const { userId } = useParams<{ userId: string }>();
+    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
 
     useEffect(() => {
         if (userId) {
@@ -38,7 +39,9 @@ const EditProfile: React.FC = () => {
                             ...response.user,
                         });
                         if (typeof response.user.profilePhoto === 'string') {
-                            setImagePreview(response.user.profilePhoto);
+                            const imgNotNull = response.user.profilePhoto;
+                            const imgUrl = `${apiUrl}/users/${imgNotNull}`;
+                            setImagePreview(imgUrl); 
                         }
                     }
                 } catch (error) {
@@ -60,7 +63,7 @@ const EditProfile: React.FC = () => {
                 ...prevData,
                 profilePhoto: file,
             }));
-            setImagePreview(URL.createObjectURL(file));
+            setImagePreview(URL.createObjectURL(file)); 
         }
     };
 
@@ -74,20 +77,31 @@ const EditProfile: React.FC = () => {
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+    
         if (userId) {
             try {
                 const formData = new FormData();
-                formData.append('fullName', profileData.fullName);
-                formData.append('career', profileData.career ?? '');
-                formData.append('aboutMe', profileData.aboutMe ?? '');
-                formData.append('username', profileData.username);
-                formData.append('password', profileData.password);
-
+    
+                // Add only non-empty or non-null values to FormData
                 if (profileData.profilePhoto && profileData.profilePhoto instanceof File) {
-                    formData.append('profilePhoto', profileData.profilePhoto);
+                    formData.append('profilePhoto', profileData.profilePhoto); 
                 }
-
+                if (profileData.username) {
+                    formData.append('username', profileData.username);
+                }
+                if (profileData.password) {
+                    formData.append('password', profileData.password);
+                }
+                if (profileData.fullName !== undefined && profileData.fullName !== null) {
+                    formData.append('fullName', profileData.fullName);
+                }
+                if (profileData.career !== undefined && profileData.career !== null) {
+                    formData.append('career', profileData.career);
+                }
+                if (profileData.aboutMe !== undefined && profileData.aboutMe !== null) {
+                    formData.append('aboutMe', profileData.aboutMe);
+                }
+    
                 const response = await updateUser(Number(userId), formData);
                 if (response.message) {
                     Swal.fire({
@@ -117,7 +131,11 @@ const EditProfile: React.FC = () => {
                 console.error('Update profile error:', error);
             }
         }
-    };
+    };    
+
+    const displayProfilePicture = imagePreview 
+        ? imagePreview 
+        : (profileData.profilePhoto ? `${apiUrl}/users/${profileData.profilePhoto}` : nullPhoto);
 
     return (
         <div className="page-wraper header-fixed">
@@ -134,11 +152,6 @@ const EditProfile: React.FC = () => {
                             <h4 className="title mb-0">Edit Profile</h4>
                         </div>
                         <div className="mid-content"></div>
-                        <div className="right-content">
-                            <a href={`/profile/${localStorage.getItem('userId')}`} className="text-dark font-20">
-                                <i className="fa-solid fa-check"></i>
-                            </a>
-                        </div>
                     </div>
                 </div>
             </header>
@@ -146,8 +159,11 @@ const EditProfile: React.FC = () => {
                 <div className="container">
                     <div className="edit-profile">
                         <div className="profile-image">
-                            <div className="media media-100 rounded-circle">
-                                <img src={imagePreview ? `${"http://localhost:5000/users/" + imagePreview}` : nullPhoto} alt="Profile" />
+                            <div className={`media media-100 rounded-circle`}>
+                                <img 
+                                    src={displayProfilePicture} 
+                                    alt="Profile Photo" 
+                                />
                             </div>
                             <a href="javascript:void(0);" onClick={handleChangeProfilePhoto}>Change profile photo</a>
                             <input
@@ -159,51 +175,51 @@ const EditProfile: React.FC = () => {
                             />
                         </div>
                         <form onSubmit={handleFormSubmit}>
-                            <div className="mb-3 input-group input-mini">
+                            <div className="mb-3">
+                                <p style={{ textAlign: 'left', marginBottom: '5px' }}>Username</p>
                                 <input
                                     type="text"
                                     name="username"
                                     className="form-control"
-                                    placeholder="Username"
                                     value={profileData.username}
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div className="mb-3 input-group input-mini">
+                            <div className="mb-3">
+                                <p style={{ textAlign: 'left', marginBottom: '5px' }}>Password</p>
                                 <input
                                     type="text"
                                     name="password"
                                     className="form-control"
-                                    placeholder="Username"
                                     value={profileData.password}
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div className="mb-3 input-group input-mini">
+                            <div className="mb-3">
+                                <p style={{ textAlign: 'left', marginBottom: '5px' }}>Full Name</p>
                                 <input
                                     type="text"
                                     name="fullName"
                                     className="form-control"
-                                    placeholder="Full Name"
                                     value={profileData.fullName}
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div className="mb-3 input-group input-mini">
+                            <div className="mb-3">
+                                <p style={{ textAlign: 'left', marginBottom: '5px' }}>Career</p>
                                 <input
                                     type="text"
                                     name="career"
                                     className="form-control"
-                                    placeholder="Career"
                                     value={profileData.career ?? ''}
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div className="mb-3 input-group input-mini">
+                            <div className="mb-3">
+                                <p style={{ textAlign: 'left', marginBottom: '5px' }}>Bio</p>
                                 <textarea
                                     name="aboutMe"
                                     className="form-control"
-                                    placeholder="About Me"
                                     value={profileData.aboutMe ?? ''}
                                     onChange={handleInputChange}
                                 />

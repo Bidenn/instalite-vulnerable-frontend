@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate in React Router v6
+import { useNavigate } from 'react-router-dom';
 import HomepageHeader from './HomepageHeader';
 import Story from './Story';
 import Postcard from './Postcard';
 import Menubar from './Menubar';
 
-import { fetchHomepagePosts } from '../apis/HomepageApi'; // Assume this is the function to fetch posts
+import { fetchHomepagePosts } from '../apis/HomepageApi'; 
 
 const Homepage: React.FC = () => {
-  const [posts, setPosts] = useState<any[]>([]); // State to store posts
-  const [error, setError] = useState<string | null>(null); // State for error message
-  const [loggedUser, setLoggedUser] = useState<any>(null); // State to store logged-in user
-  const navigate = useNavigate(); // React Router v6 hook for navigation
+  const [posts, setPosts] = useState<any[]>([]); 
+  const [error, setError] = useState<string | null>(null); 
+  const [loggedUser, setLoggedUser] = useState<any>(null); 
+  const navigate = useNavigate(); 
   const userId = localStorage.getItem('userId');
-
-  console.log(posts);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,14 +22,14 @@ const Homepage: React.FC = () => {
           if ('error' in response) {
             setError(response.error);
           } else if (!response.loggedUser) {
-            navigate('/login'); // Redirect to /login if logged user is not found
+            navigate('/login'); 
           } else {
             setPosts(response.posts);
             setLoggedUser(response.loggedUser);
           }
         } else {
           console.log('User not logged in');
-          navigate('/login'); // Redirect to /login if userId is not found in localStorage
+          navigate('/login'); 
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -40,25 +38,17 @@ const Homepage: React.FC = () => {
     };
 
     fetchPosts();
-  }, [userId, navigate]); // Add navigate to dependency array
+  }, [userId, navigate]); 
 
   return (
     <div className="page-wraper header-fixed">
-      {/* Header Section */}
       <HomepageHeader />
-
       <div className="page-content">
         <div className="content-inner pt-0">
           <div className="container p-b50">
-            {/* Story Section */}
             {loggedUser && (
-              <Story
-                userName={loggedUser.username} // Pass the correct prop name
-                profilePhoto={loggedUser.profilePhoto} // Pass the correct prop name
-              />
+              <Story userName={loggedUser.username} profilePhoto={loggedUser.profilePhoto}/>
             )}
-
-            {/* Display posts */}
             {error && <div className="error-message">{error}</div>}
             {posts.length > 0 ? (
               posts.map((post) => (
@@ -77,8 +67,6 @@ const Homepage: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Menubar Section */}
       <Menubar />
     </div>
   );

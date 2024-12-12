@@ -9,7 +9,7 @@ const Menubar = () => {
     return (
         <div className="menubar-area">
             <div className="toolbar-inner menubar-nav">
-                <Link to="/Home" className={`nav-link ${location.pathname === '/Home' ? 'active' : ''}`}>
+                <Link to="/home" className={`nav-link ${location.pathname === '/home' ? 'active' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none">
                         <path d="M21.44 11.035a.75.75 0 0 1-.69.465H18.5V19a2.25 2.25 0 0 1-2.25 2.25h-3a.75.75 0 0 1-.75-.75V16a.75.75 0 0 0-.75-.75h-1.5a.75.75 0 0 0-.75.75v4.5a.75.75 0 0 1-.75.75h-3A2.25 2.25 0 0 1 3.5 19v-7.5H1.25a.75.75 0 0 1-.69-.465.75.75 0 0 1 .158-.818l9.75-9.75A.75.75 0 0 1 11 .246a.75.75 0 0 1 .533.222l9.75 9.75a.75.75 0 0 1 .158.818z" fill="#b5b5b5" />
                     </svg>

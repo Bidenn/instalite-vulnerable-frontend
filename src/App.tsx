@@ -23,7 +23,7 @@ function App() {
                         <Route path="/register" element={<Register/>}/>
                         <Route path="/login" element={<Login />}/>
                         <Route element={<ProtectedRoute />}>
-                            <Route path="/Home" element={<Homepage />} />
+                            <Route path="/home" element={<Homepage />} />
                             <Route path="/profile/:userId" element={<Profile />} />
                             <Route path="/create-post" element={<CreatePost />} />
                             <Route path="/profile/:userId/edit" element={<EditProfile />} />

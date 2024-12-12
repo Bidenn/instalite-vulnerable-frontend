@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import pic4 from './assets/images/login/pic4.jpg';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../apis/AuthApi';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
 
 interface FormData {
     username: string;
@@ -28,7 +28,7 @@ const Login: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await login(formData); // Use login from AuthApi
+            const response = await login(formData); 
 
             if (response.message === "Login successful" && response.userId) {
                 localStorage.setItem('userId', response.userId.toString());
@@ -65,8 +65,7 @@ const Login: React.FC = () => {
                         <div className="bg-image bg-image-overlay" style={{ backgroundImage: `url(${pic4})` }}></div>
                         <div className="join-area">
                             <div className="started">
-                                <h1 className="title">Instalite - Auth</h1>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
+                                <h1 className="title">Instalite - Login</h1>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3 input-group input-group-icon">
@@ -81,7 +80,7 @@ const Login: React.FC = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        placeholder="Username"
+                                        placeholder="Username or Email"
                                         name="username"
                                         value={formData.username}
                                         onChange={handleChange}
