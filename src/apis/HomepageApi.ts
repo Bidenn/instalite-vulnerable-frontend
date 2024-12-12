@@ -1,7 +1,8 @@
 // apis/HomepageApi.ts
 import axios, { AxiosError } from 'axios';
 
-const API_URL = 'http://localhost:5000/api/home';  // Your API endpoint
+const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+const API_URL = `${apiUrl}/api/home`; 
 
 interface HomepageResponse {
   message: string;

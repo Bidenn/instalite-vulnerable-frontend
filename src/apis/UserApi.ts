@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 
-const API_URL = 'http://localhost:5000/api/users';
+const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+const API_URL = `${apiUrl}/api/users`; 
 
-// Updated UserData interface with all necessary fields
 interface UserData {
   username: string;
   fullName: string;
