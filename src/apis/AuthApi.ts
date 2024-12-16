@@ -3,22 +3,12 @@ import axios, { AxiosError } from 'axios';
 const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
 const API_URL = `${apiUrl}/api/auth`; 
 
-interface RegisterFormData {
-    username: string;
-    email: string;
-    password: string;
-}
-interface LoginFormData {
-    username: string;
-    password: string;
-  }
-
 interface RegisterResponse {
-  error?: string;
-  message?: string;
+    error?: string;
+    message?: string;
 }
 interface LoginResponse {
-    userId?: string;
+    loggedUser?: string;
     message?: string;
     error?: string;
 }
@@ -26,9 +16,9 @@ interface ErrorResponse {
     error: string;
 }
 
-export const register = async (formData: RegisterFormData): Promise<RegisterResponse> => {
+export const register = async (payload: { email: string; password: string }): Promise<RegisterResponse> => {
     try {
-        const response = await axios.post(`${API_URL}/register`, formData);
+        const response = await axios.post(`${API_URL}/register`, payload);
         return response.data;
     } catch (error) {
         const err = error as AxiosError<ErrorResponse>;
@@ -36,10 +26,10 @@ export const register = async (formData: RegisterFormData): Promise<RegisterResp
     }
 };
 
-export const login = async (formData: LoginFormData): Promise<LoginResponse> => {
+export const login = async (payload: { UsernameOrEmail: string; Password: string }): Promise<LoginResponse> => {
     try {
-        const response = await axios.post(`${API_URL}/login`, formData);
-        return { message: response.data.message, userId: response.data.userId };
+        const response = await axios.post(`${API_URL}/login`, payload);
+        return { message: response.data.message, loggedUser: response.data.loggedUser };
     } catch (error) {
         const err = error as AxiosError<{ error: string }>;
         return { error: err.response?.data?.error ?? 'Login failed.' };

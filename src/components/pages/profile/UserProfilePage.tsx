@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './assets/css/style.css';
-import nullPhoto from './assets/images/avatar/NullUserPhoto.png';
-import Menubar from './Menubar';
-import { fetchUserWP } from '../apis/UserApi';
+import '../../assets/css/style.css';
+import nullPhoto from '../../assets/images/avatar/NullUserPhoto.png';
+import Menubar from '../shared/Menubar';
+import { fetchProfileData } from '../../../apis/ProfileApi'; 
 
-interface UserData {
+interface ProfileData {
     username?: string;
-    fullName?: string;
-    profilePhoto?: string;
-    aboutMe?: string;
+    fullname?: string;
+    photo?: string;
     career?: string;
+    bio?: string;
 }
 
 interface PostData {
@@ -20,50 +20,57 @@ interface PostData {
 }
 
 const Profile: React.FC = () => {
-    const [user, setUser] = useState<UserData>({
+    
+    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
+
+    const [profile, setProfile] = useState<ProfileData>({
         username: '',
-        fullName: '',
-        profilePhoto: '',
-        aboutMe: '',
+        fullname: '',
+        photo: '',
         career: '',
+        bio: '',
     });
 
     const [posts, setPosts] = useState<PostData[]>([]);
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const apiUrl: string = process.env.REACT_APP_BACKEND_HOST!;
-
-    const userIdString = localStorage.getItem('userId');
-    const userId = userIdString ? Number(userIdString) : null;
+    const loggedUser = localStorage.getItem('loggedUser');
 
     useEffect(() => {
-        if (!userId) {
+        if (!loggedUser) {
             navigate('/login');
         } else {
             const loadUserData = async () => {
                 try {
-                    const userData = await fetchUserWP(userId);
-                    if (userData.user) {
-                        setUser(userData.user);
-                    }
-                    if (userData.posts) {
-                        setPosts(userData.posts);
+                    const data = await fetchProfileData();
+                    const profile = data.user;    
+                    if (profile) {
+                        setProfile({
+                            username: profile.username,
+                            fullname: profile.fullname,
+                            photo: profile.photo,
+                            career: profile.career,
+                            bio: profile.bio,
+                        });
+                        setPosts(data.posts ?? []);
+                    } else if ('error' in data) {
+                        setError(data.error); 
+                    } else {
+                        setError('Unexpected data structure.'); 
                     }
                 } catch (error) {
-                    console.error('Failed to fetch user data:', error);
+                    console.error('Failed to fetch user data with posts:', error);
+                    setError('An error occurred while fetching data.');
                 }
             };
             loadUserData();
         }
-    }, [userId, navigate]);
-
-    useEffect(() => {
-        console.log('User Data Updated:', user); 
-    }, [user]);
+    }, [loggedUser, navigate]);    
 
     const handleLogout = () => {
-        localStorage.removeItem('userId');
-        navigate('/login');
+        localStorage.removeItem('loggedUser'); 
+        navigate('/login'); 
     };
 
     return (
@@ -72,9 +79,6 @@ const Profile: React.FC = () => {
                 <div className="container">
                     <div className="main-bar">
                         <div className="left-content">
-                            <a href="/home" className="back-btn">
-                                <i className="fa-solid fa-arrow-left"></i>
-                            </a>
                             <h4 className="title mb-0">Profile</h4>
                         </div>
                         <div className="mid-content">
@@ -92,37 +96,45 @@ const Profile: React.FC = () => {
 
             <div className="page-content">
                 <div className="container profile-area">
+                    {error && <div className="error-message">{error}</div>}
                     <div className="profile">
                         <div className="main-profile">
                             <div className="left-content">
-                                <span>@{user.username}</span>
-                                <h5 className="mt-1">{user.fullName ?? '-'}</h5>
-                                <h6 className="text-primary font-w400">{user.career ?? '-'}</h6>
+                                <span>@{profile.username}</span>
+                                <h5 className="mt-1">{profile.fullname ?? '-'}</h5>
+                                <h6 className="text-primary font-w400">{profile.career ?? '-'}</h6>
                             </div>
                             <div className="right-content">
                                 <div className="upload-box">
-                                    <img src={user.profilePhoto ? `${`${apiUrl}/users/` + user.profilePhoto}` : nullPhoto} alt="profile" />
-                                    <button className="upload-btn" onClick={() => navigate('edit')}>
+                                    <img
+                                        src={ profile.photo ? `${apiUrl}/users/${profile.photo}` : nullPhoto }
+                                        alt="Not Image Photo"
+                                    />
+                                    <button className="upload-btn" onClick={() => navigate(`${loggedUser}/edit`)}>
                                         <i className="fa-solid fa-pencil"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div className="info">
-                            <h6>About Me</h6>
-                            <p>{user.aboutMe ?? '-'}</p>
+                            <h6>Bio</h6>
+                            <p>{profile.bio ?? 'No details provided'}</p>
                         </div>
                     </div>
                     <div className="contant-section">
                         <div className="dz-lightgallery style-2">
-                            {posts.map((post) => (
-                                <a key={post.id} className="gallery-box" href={`/posts/${post.id}`}>
-                                    <img
-                                        src={"http://localhost:5000/posts/"+post.content}
-                                        alt="this is user posts"
-                                    />
-                                </a>
-                            ))}
+                            {posts.length > 0 ? (
+                                posts.map((post) => (
+                                    <a key={post.id} className="gallery-box" href={`/posts/${post.id}`}>
+                                        <img
+                                            src={`${apiUrl}/posts/${post.content}`}
+                                            alt="Not Image Post"
+                                        />
+                                    </a>
+                                ))
+                            ) : (
+                                <p>No posts available.</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -131,7 +143,5 @@ const Profile: React.FC = () => {
         </div>
     );
 };
-
-
 
 export default Profile;
