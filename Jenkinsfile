@@ -50,7 +50,6 @@ pipeline {
 
         stage('Stop npm Start Script') {
             steps {
-                // Safely stop the npm start script if it's running
                 sh 'pgrep -f "npm start" | xargs kill -9 || true'
             }
         }
