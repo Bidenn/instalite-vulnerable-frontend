@@ -12,7 +12,7 @@ const CreateProfile: React.FC = () => {
     const [fullname, setfullname] = useState('');
     const [bio, setBio] = useState('');
     const [career, setCareer] = useState('');
-    const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+    const [photo, setProfilePhoto] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [imagePreview, setImagePreview] = useState<string>(nullPhoto);
     const loggedUser = localStorage.getItem('loggedUser');
@@ -56,7 +56,6 @@ const CreateProfile: React.FC = () => {
         if (value.length > 2) {
             try {
                 const result = await checkUsernameAvailability(value);
-                console.log(result);
                 setIsAvailable(result.status);
             } catch {
                 setIsAvailable(null);
@@ -112,7 +111,7 @@ const CreateProfile: React.FC = () => {
             profileData.append('fullname', fullname);
             profileData.append('bio', bio);
             profileData.append('career', career);
-            if (profilePhoto) profileData.append('profilePhoto', profilePhoto);
+            if (photo) profileData.append('photo', photo);
 
             if (loggedUser) {
                 const response = await updateProfileData(loggedUser, profileData);
