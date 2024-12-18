@@ -147,7 +147,7 @@ const CreatePost: React.FC = () => {
                                 className="form-control rounded shadow-sm"
                                 value={postContent}
                                 onChange={handlePostContentChange}
-                                rows={10}
+                                rows={5}
                                 placeholder="Caption here..."
                                 required
                             />

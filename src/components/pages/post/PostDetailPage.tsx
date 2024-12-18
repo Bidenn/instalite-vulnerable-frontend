@@ -124,7 +124,7 @@ const PostDetail: React.FC = () => {
     
                     setTimeout(() => {
                         window.location.reload();
-                    }, 2000); 
+                    }, 1000); 
                 }
             } else {
                 console.error("Logged user is null");
@@ -264,10 +264,10 @@ const PostDetail: React.FC = () => {
                                 comments.map((comment) => (
                                     <li key={comment.id}>
                                         <div className="list-content">
-                                            <img src={comment.user.photo ? `${apiUrl}/users/${comment.user.photo}` : u1} alt="/" />
+                                            <img src={comment.user?.photo ? `${apiUrl}/users/${comment.user.photo}` : u1} alt="/" />
                                             <div>
-                                                <h6 className="font-13 mb-1" style={{ textAlign: 'left' }}>{comment.user.username}</h6>
-                                                <p className="mb-2" style={{fontSize:'12px'}}>{comment.text}</p>
+                                                <h6 className="font-13 mb-1" style={{ textAlign: 'left' }}>{comment.user?.username}</h6>
+                                                <p className="mb-2" style={{fontSize:'12px', textAlign:'left'}}>{comment.text}</p>
                                             </div>
                                         </div>
                                         <div className="ms-auto">
